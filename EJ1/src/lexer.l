@@ -19,8 +19,13 @@ int yycolumn = 1;
 %option noyywrap yylineno
 
 /* Definiciones */
-DIGIT   [0-9]
-NUMBER  {DIGIT}+
+DIGIT [0-9]
+NUMBER {DIGIT}+
+BIN_DIGIT [01]
+BIN_NUMBER {BIN_DIGIT}+(\.{BIN_DIGIT}+)?
+BIN_FRAC_PART [01]+
+BIN_INT_PART  [01]+
+
 
 %% // %% significa el inicio de las reglas de análisis léxico en Flex
 
@@ -48,6 +53,14 @@ NUMBER  {DIGIT}+
     /* avanzamos columna en YY_USER_ACTION */
 }
 
+
+{BIN_NUMBER} {
+    yylval.str = strdup(yytext);  // Copia el literal binario como string
+    return BINARIO;
+}
+
+
+
 . {
     /* Error léxico: usamos yylloc.first_column */
     fprintf(stderr,
@@ -59,3 +72,27 @@ NUMBER  {DIGIT}+
 }
 
 %%
+/*
+{BIN_DIGIT}*\.[^01\n\t\r ]+ {
+    fprintf(stderr, "Error: dígitos no binarios después del punto en '%s' (línea %d, col %d)\n",
+            yytext, yylloc.first_line, yylloc.first_column);
+    return ERROR;
+}
+
+{BIN_DIGIT}*\.[01]*\.[01]* {
+    fprintf(stderr, "Error: número binario con múltiples puntos en '%s' (línea %d, col %d)\n",
+            yytext, yylloc.first_line, yylloc.first_column);
+    return ERROR;
+}
+
+\.{BIN_FRAC_PART} {
+    fprintf(stderr, "Error: número binario sin parte entera en '%s' (línea %d, col %d)\n",
+            yytext, yylloc.first_line, yylloc.first_column);
+    return ERROR;
+}
+
+{BIN_INT_PART}\. {
+    fprintf(stderr, "Error: número binario sin parte fraccionaria en '%s' (línea %d, col %d)\n",
+            yytext, yylloc.first_line, yylloc.first_column);
+    return ERROR;
+}*/
