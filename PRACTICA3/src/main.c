@@ -1,13 +1,23 @@
 #include <stdio.h>
 
-/* Declaraciones generadas por Bison/Flex */
+// Declaración externa de yyparse generada por Bison
 int yyparse(void);
 
-int main(void) {
-    printf("Calculadora simple (Ctrl+D para salir)\n> ");
-    if (yyparse() != 0) {
-        fprintf(stderr, "Fallo en el parseo\n");
-        return 1;
+// Declaración externa de yyerror para manejar errores
+void yyerror(const char *s);
+
+int main() {
+    printf("Introduce las declaraciones de variables:\n");
+    int resultado = yyparse();  // Ejecuta el parser
+
+    if (resultado == 0) {
+        printf("Análisis completado correctamente.\n");
+    } else {
+        printf("Error durante el análisis.\n");
     }
-    return 0;
+    return resultado;
+}
+
+void yyerror(const char *s) {
+    fprintf(stderr, "Error de sintaxis: %s\n", s);
 }
